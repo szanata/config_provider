@@ -1,0 +1,9 @@
+{
+  "crawler": {
+    "global_threshold": 1000,
+    "interval": 100
+  },
+  "client": {
+    "type": "forward"
+  }
+}

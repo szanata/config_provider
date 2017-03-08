@@ -1,0 +1,14 @@
+{
+  "development": {
+    "color": "green"
+  },
+  "staging": {
+    "color": "blue"
+  },
+  "test": {
+    "color": "red"
+  },
+  "production": {
+    "color": "white"
+  }
+}
