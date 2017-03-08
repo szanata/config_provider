@@ -13,8 +13,10 @@ const ConfigProvider = require( 'config_provider' );
 ```
 
 ## 2. Load files
+Se the path to read the files
 ```js
-ConfigProvider.load( '../config' );
+var cfgPath = require('path').join( __dirname, '../config' );
+ConfigProvider.load( cfgPath );
 ```
 
 ## 3. Get configurations

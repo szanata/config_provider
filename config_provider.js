@@ -12,7 +12,7 @@ const path = require('path');
 let configs;
 
 function loadFilesFromPath( cgfPath ) {
-  configs = walk( path.join( __dirname, cgfPath ) )
+  configs = walk( cgfPath )
     // load files by their names as an array of { fileNameWithoutExtesion: { content} }
     .map( filePath => {
       const name = filePath.replace( /(.+\/)*/g, '' ).replace( /\.js$|\.json$/, '' );

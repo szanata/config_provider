@@ -3,11 +3,13 @@ const should = require('chai').should();
 const expect = chai.expect;
 
 const ConfigProvider = require('../../config_provider');
+const cfgPath = require( 'path' ).join( __dirname, '../config' );
+
 
 describe('Config Provider tests', () => {
   
   it('Should load all configs from given path', function () {
-    ConfigProvider.load( './spec/config' );
+    ConfigProvider.load( cfgPath );
     
     var red = ConfigProvider.get( 'global.settings.colors.red' );
     var menu = ConfigProvider.get( 'global.settings.menu' );
@@ -21,11 +23,11 @@ describe('Config Provider tests', () => {
   it('Should load some ENV sensitive configuration', function () {
     
     process.env.NODE_ENV = 'production'
-    ConfigProvider.load( './spec/config' );
+    ConfigProvider.load( cfgPath );
     var productionColor = ConfigProvider.get( 'settings.color' );
     
     process.env.NODE_ENV = 'staging'
-    ConfigProvider.load( 'spec/config' );
+    ConfigProvider.load( cfgPath );
     var stagingColor = ConfigProvider.get( 'settings.color' );
     
     expect( productionColor ).to.eql( 'white' );
@@ -37,7 +39,7 @@ describe('Config Provider tests', () => {
     process.env.SETTINGS__COLOR = 'yellow';
     process.env.GLOBAL__SETTINGS__COLORS__RED = '#00fd00';
     process.env.GLOBAL__SETTINGS__MENU = 3;
-    ConfigProvider.load( 'spec/config' );
+    ConfigProvider.load( cfgPath );
     
     var color = ConfigProvider.get( 'settings.color' );
     var red = ConfigProvider.get( 'global.settings.colors.red' );
