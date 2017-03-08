@@ -1,6 +1,6 @@
 {
-  "name": "config_provider",
-  "version": "1.0.0",
+  "name": "config-provider",
+  "version": "1.0.1",
   "description": "Configuratios manager",
   "main": "config_provider.js",
   "dependencies": {
