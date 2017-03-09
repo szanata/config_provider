@@ -45,6 +45,7 @@ function overwriteEnvVars( ) {
     const value = process.env[_var];
     const innerPropName = propsCascade.pop();
     const lastPropObject = propsCascade.reduce( (o, p) => o[p] , configs );
+    if (!lastPropObject) { return; }
     let newValue = value;
     if ( typeof lastPropObject[innerPropName] === 'number' ) {
       newValue = parseFloat( newValue );
