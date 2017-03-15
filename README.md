@@ -54,8 +54,22 @@ So:
 const type = ConfigProvider.get( 'settings.global.method_type' );
 type === 'dynamic' // true
 ```
+## 5.ENV dependant values
+If some file have its first level with names from environments (production, staging, etc) it will be automatic selected the appropriate one. Eg:
+```js
+{
+  "production": { 
+    "color": "red"
+  },
+  "staging": {
+    "color": "blue"
+  }
+}
+```
 
-## 4. Notes
+If the environtmento is staging, than `ConfigProvider.get('color')` will return "blue". You can omit the env part of the query.
+
+## 6. Notes
 
 - The first part of the path used in `get` is the name of the file, without the extension, so if some file is `config.json`, it will be accessible as `config`.
 
