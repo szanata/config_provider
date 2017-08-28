@@ -13,7 +13,10 @@ const ConfigProvider = require( 'config_provider' );
 ```
 
 ## 2. Load files
-Se the path to read the files
+All .json and .js files from a ./config folder will be **read by default**, so no config need.
+
+But you can change that explicit by setting:
+
 ```js
 var cfgPath = require('path').join( __dirname, '../config' );
 ConfigProvider.load( cfgPath );
@@ -58,7 +61,7 @@ type === 'dynamic' // true
 If some file have its first level with names from environments (production, staging, etc) it will be automatic selected the appropriate one. Eg:
 ```js
 {
-  "production": { 
+  "production": {
     "color": "red"
   },
   "staging": {
