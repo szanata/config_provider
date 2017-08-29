@@ -12,7 +12,7 @@ const fs = require( 'fs' );
 
 let configs = {};
 
-const defaultPath = path.join( __dirname, 'config' );
+const defaultPath = path.join( require.main.filename.split('/node_modules')[0], 'config' );
 
 function loadFilesFromPath( cfgPath ) {
   if ( !fs.existsSync( cfgPath ) ) {
@@ -67,10 +67,6 @@ module.exports = {
   // load config files
   load( userPath = null ) {
     const cfgPath = userPath || defaultPath;
-
-    if ( !cfgPath ) {
-      throw new Error( 'You must set up the config path.' );
-    }
 
     loadFilesFromPath( cfgPath );
     filterEnvSensitiveConfigs( );
