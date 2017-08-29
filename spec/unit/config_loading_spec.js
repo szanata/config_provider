@@ -4,20 +4,14 @@ const expect = chai.expect;
 
 const cfgPath = require( 'path' ).join( __dirname, '../config' );
 
-
-describe('Config Provider tests', () => {
-
-  let ConfigProvider;
-
-  beforeEach(() => {
-    ConfigProvider = require('../../index');
-  });
+describe('Config loading tests tests', () => {
 
   afterEach(() => {
     delete require.cache[require.resolve( '../../index' )];
   });
 
   it('Should load all configs from given path', () => {
+    const ConfigProvider = require('../../index');
     ConfigProvider.load( cfgPath );
 
     const red = ConfigProvider.get( 'global.settings.colors.red' );
@@ -30,9 +24,17 @@ describe('Config Provider tests', () => {
   });
 
   it('Should load all configs from default "/config" folder if none was specified', () => {
-
+    const ConfigProvider = require('../../index');
     const foo = ConfigProvider.get( 'foo' );
 
     expect( foo.bar ).to.eql( 1 );
+  });
+
+  it('Should not load anything but the default config, if the path do not exists', () => {
+    const ConfigProvider = require('../../index');
+    ConfigProvider.load( 'random_path' );
+    const foo = ConfigProvider.get( 'foo' );
+
+    expect( foo ).to.eql( { bar: 1 } );
   });
 });

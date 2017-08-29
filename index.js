@@ -8,14 +8,18 @@
 
 const walk = require( 'walk.js' );
 const path = require( 'path' );
+const fs = require( 'fs' );
 
-let configs;
-let alreadyLoaded = false;
+let configs = {};
 
 const defaultPath = path.join( __dirname, 'config' );
 
-function loadFilesFromPath( cgfPath ) {
-  configs = walk( cgfPath )
+function loadFilesFromPath( cfgPath ) {
+  if ( !fs.existsSync( cfgPath ) ) {
+    return;
+  }
+
+  configs = walk( cfgPath )
     // load files by their names as an array of { fileNameWithoutExtesion: { content} }
     .map( filePath => {
       const name = filePath.replace( /(.+\/)*/g, '' ).replace( /\.js$|\.json$/, '' );
@@ -62,8 +66,6 @@ module.exports = {
 
   // load config files
   load( userPath = null ) {
-    if ( alreadyLoaded ) { return; } // load only once
-
     const cfgPath = userPath || defaultPath;
 
     if ( !cfgPath ) {
@@ -73,12 +75,12 @@ module.exports = {
     loadFilesFromPath( cfgPath );
     filterEnvSensitiveConfigs( );
     overwriteEnvVars( );
-    alreadyLoaded = true;
   },
 
   // get some key
   get( key ) {
-    this.load( );
     return key.split( '.' ).reduce( ( prev, curr ) => ( prev ? prev[curr] : undefined ), configs );
   }
 };
+
+module.exports.load();

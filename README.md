@@ -1,8 +1,8 @@
 # Config provider
 
-A service module to load json configuration files from some path
-Filter by environment if its sensitive to this
-And overwrite ENV vars on those files
+A service module to load json configuration from json files  
+Filter those by the environment (staging, production, test, development, etc)  
+And overwrite some of those with ENV variables
 
 ## 1. Install & import
 
