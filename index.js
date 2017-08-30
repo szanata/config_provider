@@ -12,6 +12,9 @@ const fs = require( 'fs' );
 
 let configs = {};
 let defaultPath;
+
+console.log('Main filename', require.main.filename);
+
 if ( require.main.filename.includes('/node_modules') ) {
   defaultPath = path.join( require.main.filename.split( '/node_modules' )[0], 'config' );
 } else {
