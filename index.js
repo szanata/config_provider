@@ -30,13 +30,6 @@ if ( require.main.filename.includes('/node_modules') ) {
 
 const defaultPath = path.join( rootPath, 'config' );
 
-const alternative = path.join( '/', 'config' );
-
-console.log('Dirname', __dirname );
-console.log('Old method', defaultPath );
-console.log('Main alternative', alternative );
-
-
 function loadFilesFromPath( cfgPath ) {
   if ( !fs.existsSync( cfgPath ) ) {
     return;

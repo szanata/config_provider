@@ -1,6 +1,6 @@
 {
   "name": "config-provider",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Configurations Providers for Node.js",
   "main": "config_provider.js",
   "dependencies": {
