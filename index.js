@@ -11,15 +11,24 @@ const path = require( 'path' );
 const fs = require( 'fs' );
 
 let configs = {};
-let defaultPath;
-
-// console.debug('Main filename', require.main.filename);
+let rootPath = './';
 
 if ( require.main.filename.includes('/node_modules') ) {
-  defaultPath = path.join( require.main.filename.split( '/node_modules' )[0], 'config' );
+  rootPath = require.main.filename.split( '/node_modules' )[0];
 } else {
-  defaultPath = path.join( path.dirname( require.main.filename ), 'config' );
+  const pathCascade = path.dirname( require.main.filename ).split('/');
+  while ( pathCascade.length > 0 ) {
+    const checkPath = pathCascade.join('/');
+    const isRoot = walk( checkPath ).some( file => file.includes('package.json') );
+    if (isRoot) {
+      rootPath = checkPath;
+      break;
+    }
+    pathCascade.pop();
+  }
 }
+
+const defaultPath = path.join( rootPath, 'config' );
 
 const alternative = path.join( '/', 'config' );
 
