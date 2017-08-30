@@ -13,13 +13,20 @@ const fs = require( 'fs' );
 let configs = {};
 let defaultPath;
 
-console.log('Main filename', require.main.filename);
+// console.debug('Main filename', require.main.filename);
 
 if ( require.main.filename.includes('/node_modules') ) {
   defaultPath = path.join( require.main.filename.split( '/node_modules' )[0], 'config' );
 } else {
   defaultPath = path.join( path.dirname( require.main.filename ), 'config' );
 }
+
+const alternative = path.join( '/', 'config' );
+
+console.log('Dirname', __dirname );
+console.log('Old method', defaultPath );
+console.log('Main alternative', alternative );
+
 
 function loadFilesFromPath( cfgPath ) {
   if ( !fs.existsSync( cfgPath ) ) {
