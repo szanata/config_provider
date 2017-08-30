@@ -79,3 +79,5 @@ If the environtmento is staging, than `ConfigProvider.get('color')` will return 
 - Don't use camelcase on the configurations, prefer sneak_case.
 
 - On overwriting with ENV vars, use double underscores ( _ + _ ) to split the path.
+
+- Works with both mocha and pm2.

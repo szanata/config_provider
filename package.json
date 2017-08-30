@@ -1,6 +1,6 @@
 {
   "name": "config-provider",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Configurations Providers for Node.js",
   "main": "config_provider.js",
   "dependencies": {
@@ -31,7 +31,7 @@
   },
   "scripts": {
     "lint": "eslint index.js --fix",
-    "test": "nyc ./node_modules/.bin/mocha --reporter spec --recursive ./spec/unit"
+    "test": "nyc ./node_modules/.bin/mocha --reporter spec --recursive ./spec/unit --timeout 3000"
   },
   "contributors": [
     {

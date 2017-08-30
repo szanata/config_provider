@@ -11,8 +11,12 @@ const path = require( 'path' );
 const fs = require( 'fs' );
 
 let configs = {};
-
-const defaultPath = path.join( require.main.filename.split('/node_modules')[0], 'config' );
+let defaultPath;
+if ( require.main.filename.includes('/node_modules') ) {
+  defaultPath = path.join( require.main.filename.split( '/node_modules' )[0], 'config' );
+} else {
+  defaultPath = path.join( path.dirname( require.main.filename ), 'config' );
+}
 
 function loadFilesFromPath( cfgPath ) {
   if ( !fs.existsSync( cfgPath ) ) {
@@ -50,7 +54,9 @@ function overwriteEnvVars( ) {
     const propsCascade = variable.split( '__' ).map( v => v.toLowerCase() );
     const value = process.env[variable];
     const innerPropName = propsCascade.pop();
-    const lastPropObject = propsCascade.reduce( ( o, p ) => o[p], configs );
+    const lastPropObject = propsCascade.reduce( ( o, p ) => {
+      return o ? o[p] : null;
+    }, configs );
 
     if ( !lastPropObject ) { return; }
 

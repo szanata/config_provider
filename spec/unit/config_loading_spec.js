@@ -4,7 +4,7 @@ const expect = chai.expect;
 
 const cfgPath = require( 'path' ).join( __dirname, '../config' );
 
-describe('Config loading tests tests', () => {
+describe('Config loading tests', () => {
 
   afterEach(() => {
     delete require.cache[require.resolve( '../../index' )];
