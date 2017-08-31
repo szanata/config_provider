@@ -1,40 +1,59 @@
 const chai = require('chai');
 const should = require('chai').should();
 const expect = chai.expect;
+const spawnSync = require( 'child_process' ).spawnSync;
 
 const cfgPath = require( 'path' ).join( __dirname, '../config' );
 
 describe('Config loading tests', () => {
 
   afterEach(() => {
-    delete require.cache[require.resolve( '../../index' )];
+    delete require.cache[require.resolve( '../../lib/index' )];
   });
 
-  it('Should load all configs from given path', () => {
-    const ConfigProvider = require('../../index');
-    ConfigProvider.load( cfgPath );
+  describe('Custom config load via .load()', () => {
 
-    const red = ConfigProvider.get( 'global.settings.colors.red' );
-    const menu = ConfigProvider.get( 'global.settings.menu' );
-    const gThreshold = ConfigProvider.get( 'config.crawler.global_threshold' );
+    it('Should load all configs from given path (.js & .json)', () => {
+      const ConfigProvider = require('../../lib/index');
+      ConfigProvider.load( cfgPath );
 
-    expect( red ).to.eql( '#00ff00' );
-    expect( menu ).to.eql( 2 );
-    expect( gThreshold ).to.eql( 1000 );
+      const red = ConfigProvider.get( 'global.settings.colors.red' );
+      const menu = ConfigProvider.get( 'global.settings.menu' );
+      const gThreshold = ConfigProvider.get( 'config.crawler.global_threshold' );
+
+      expect( red ).to.eql( '#00ff00' );
+      expect( menu ).to.eql( 2 );
+      expect( gThreshold ).to.eql( 1000 );
+    });
+
+    it('Should not load anything if the path do not exists', () => {
+      const ConfigProvider = require('../../lib/index');
+      ConfigProvider.load( 'random_path' );
+      const foo = ConfigProvider.get( 'foo' );
+
+      expect( foo ).to.eql( undefined );
+    });
   });
 
-  it('Should load all configs from default "/config" folder if none was specified', () => {
-    const ConfigProvider = require('../../index');
-    const foo = ConfigProvider.get( 'foo' );
+  describe('Default config load via ./config/', () => {
 
-    expect( foo.bar ).to.eql( 1 );
-  });
+    after( () => {
+      spawnSync('mv', ['./not_the_config_you_are_looking_for', './config'] )
+    });
 
-  it('Should not load anything but the default config, if the path do not exists', () => {
-    const ConfigProvider = require('../../index');
-    ConfigProvider.load( 'random_path' );
-    const foo = ConfigProvider.get( 'foo' );
+    it('Should load all configs from default "/config" folder if none was specified', () => {
+      const ConfigProvider = require('../../lib/index');
+      const foo = ConfigProvider.get( 'foo' );
 
-    expect( foo ).to.eql( { bar: 1 } );
+      expect( foo.bar ).to.eql( 1 );
+    });
+
+    it('Should not load default config if ./config does not exists', () => {
+      spawnSync('mv', ['./config', './not_the_config_you_are_looking_for'] )
+      const ConfigProvider = require('../../lib/index');
+      const foo = ConfigProvider.get( 'foo' );
+
+      expect( foo ).to.eql( undefined );
+    });
   });
 });

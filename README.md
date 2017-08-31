@@ -1,10 +1,10 @@
 # Config provider
 
-A service module to load json configuration from json files  
+A service module to load global app configurations from files and join environment variables together
 Filter those by the environment (staging, production, test, development, etc)  
 And overwrite some of those with ENV variables
 
-## 1. Install & import
+## Install & import
 
 `npm install config_provider`
 
@@ -12,72 +12,124 @@ And overwrite some of those with ENV variables
 const ConfigProvider = require( 'config_provider' );
 ```
 
-## 2. Load files
-All .json and .js files from a ./config folder will be **read by default**, so no config need.
+## Load config files
 
-But you can change that explicit by setting:
+### Eager loading
+All *.json* and *.js* files inside a folder in root of the app called */config* will
+be read as soons as this modules is required, so no actions required.
+
+
+### Lazy loading
+You can setup another folder containing your configuration files with the *.load()*:
 
 ```js
-var cfgPath = require('path').join( __dirname, '../config' );
-ConfigProvider.load( cfgPath );
+ConfigProvider.load( './path/to/my/configs' );
 ```
 
-## 3. Get configurations
-Given a file `settings.json` with:
+The parameter path is a string, and should be relative to the current folder.
+
+## Accessing configurations
+
+```js
+const value = ConfigProvider.get( 'general.system.input.type' );
+```
+
+In this example, there was a file called *general.json* with this content:
 ```js
 {
-  "global": {
-    "method_type": "static"
+  "system": {
+    "input": {
+      "type": "dynamic"
+    }
   }
 }
 ```
 
-You can access the configs as:
+*Note that the file extension is omitted when accessing the value*
+
+## Applying ENV variables to the configs
+
+All environment variables, which names are compliant with the IEEE Std 1003.1-2001 norm
+(upper case letters, _ and numbers) are automatically applied to the configs, and can be
+accessed the same way as any other config.
+
 ```js
-const type = ConfigProvider.get( 'settings.global.method_type' );
+process.env.FOO = 'bar';
+const ConfigProvider = require( 'config_provider' );
+
+ConfigProvider.get( 'foo' ) === 'bar'; // true
 ```
 
-## 4. Overwriting configurations
-Given a file `settings.json` with:
+### Overwriting via ENV variables
+
+You can overwrite any configuration, even nested ones, via the environment variables, just use __
+(double underscores) to indicate a new level:
+
+
+Given a *configs.json*:
 ```js
 {
-  "global": {
-    "method_type": "static"
+  "colors": {
+    "red": "#00ff00"
   }
 }
 ```
 
-And you want to overwrite that with a ENV var, use:
-```bash
-  SETTINGS__GLOBAL__METHOD_TYPE=dynamic
+And a main file:
+```js
+process.env.CONFIGS__COLORS__RED = 'red';
+const ConfigProvider = require( 'configs.json' );
+
+ConfigProvider.get( 'configs.colors.red' ) === 'red'; // true
 ```
 
-So:
-```js
-const type = ConfigProvider.get( 'settings.global.method_type' );
-type === 'dynamic' // true
-```
-## 5.ENV dependant values
-If some file have its first level with names from environments (production, staging, etc) it will be automatic selected the appropriate one. Eg:
+## NODE_ENV sensitive configurations
+
+If in the same config file you have configurations for more than one environment, like staging,
+production and development, the **ConfigProvider** will read just the appropriate one according
+to the current *process.env.NODE_ENV*:
+
+Given a *config.json*:
 ```js
 {
   "production": {
-    "color": "red"
+    "token": "23983748367394"
   },
   "staging": {
-    "color": "blue"
+    "token": "fake_token"
   }
 }
 ```
 
-If the environtmento is staging, than `ConfigProvider.get('color')` will return "blue". You can omit the env part of the query.
+And a main file:
+```js
+process.env.NODE_ENV = 'staging';
+const ConfigProvider = require( 'configs.json' );
 
-## 6. Notes
+ConfigProvider.get( 'token' ) === 'fake_token'; // true
+```
 
-- The first part of the path used in `get` is the name of the file, without the extension, so if some file is `config.json`, it will be accessible as `config`.
+*Note that you do not need to write the env name in the path to access the value using the .get()*
 
-- Don't use camelcase on the configurations, prefer sneak_case.
+## Supported files
 
-- On overwriting with ENV vars, use double underscores ( _ + _ ) to split the path.
+Both *.json* and *.js* files are read as configurations. For *.js* files, it must export a literal object to work:
 
-- Works with both mocha and pm2.
+A *config.js* file:
+```js
+module.exports = {
+  config: {
+    color: 'red'
+  }
+};
+```
+
+## Environment variables values parsing
+
+Any ENV variable which the value is a number or a boolean, will be converted when read by the *.get()*
+
+## Notes
+
+- Don't use camelCase on the configurations, prefer sneak_case.
+
+- This was tested with pm2, mocha, node shell and node script.

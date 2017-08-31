@@ -1,48 +1,67 @@
 const chai = require('chai');
-const should = require('chai').should();
-const expect = chai.expect;
 const path = require('path');
+const expectedResult = require('../../config/foo').bar;
+const spawnSync = require( 'child_process' ).spawnSync;
+const spawn = require( 'child_process' ).spawn;
 
-describe('Testing whether it can find the root to get the default config folder', () => {
+const expect = chai.expect;
+const assert = chai.assert;
 
-  let originalFileName;
-  before( () => {
-    originalFileName = require.main.filename;
-  });
+describe('Root path detection (./config default folder)', () => {
 
   afterEach(() => {
-    delete require.cache[require.resolve( '../../index' )];
+    delete require.cache[require.resolve( '../../lib/index' )];
   });
 
-  after(() => {
-    require.main.filename = originalFileName;
+  describe('PM2', () => {
+
+    it('Should load from default config folder', () => {
+      const pm2 = spawnSync( 'node', ['./node_modules/pm2/bin/pm2', 'start', './spec/scripts/test.js'] );
+      const logs = spawnSync( 'node', ['./node_modules/pm2/bin/pm2', 'logs', 'test', '--raw', '--nostream', '--lines', '1'] );
+
+      const result = logs.stdout.toString();
+      assert( result.includes(`RESULT=${expectedResult}`) );
+
+      spawnSync( 'node', ['./node_modules/pm2/bin/pm2', 'delete', 'test'] );
+    });
   });
 
-  it('Should find the root if it was initialized in the root folder of the project (pm2)', () => {
-    require.main.filename = path.join( path.dirname( require.resolve( '../../index' ) ), 'server.js' );
+  describe('Mocha', () => {
+    it('Should load from default config folder', () => {
+      const ConfigProvider = require('../../lib/index');
+      const foo = ConfigProvider.get( 'foo' );
 
-    const ConfigProvider = require('../../index');
-    const foo = ConfigProvider.get( 'foo' );
-
-    expect( foo.bar ).to.eql( 1 );
+      expect( foo.bar ).to.eql( expectedResult );
+    });
   });
 
-  it('Should find the root if it was initialized in another folder from the project (pm2)', () => {
-    require.main.filename = path.join( path.dirname( require.resolve( '../../index' ) ), 'spec', 'server.js' );
+  describe('Node run script', () => {
+    it('Should load from default config folder', () => {
+      const script = spawnSync( 'node', ['./spec/scripts/test.js'] );
+      const result = script.stdout.toString();
 
-    const ConfigProvider = require('../../index');
-    const foo = ConfigProvider.get( 'foo' );
-
-    expect( foo.bar ).to.eql( 1 );
+      assert( result.includes(`RESULT=${expectedResult}`) );
+    });
   });
 
+  describe('Node shell', () => {
+    it('Should load from default config folder', (done) => {
+      const node = spawn( 'node' );
 
-  it('Should find the root if if it was initialized by one a node_module (mocha)', () => {
-    require.main.filename = path.join( path.dirname( require.resolve( '../../index' ) ), 'node_modules', 'app.js' );
+      node.stdout.on('data', data => {
+        assert( data.includes(`RESULT=${expectedResult}`) );
+      });
 
-    const ConfigProvider = require('../../index');
-    const foo = ConfigProvider.get( 'foo' );
+      node.stdin.setEncoding('utf-8');
+      node.stdin.write("const ConfigProvider = require('./lib/index');\n");
+      node.stdin.write("const foo = ConfigProvider.get('foo');\n");
+      node.stdin.write("console.log(`RESULT=${foo.bar}`);\n");
+      node.stdin.end();
 
-    expect( foo.bar ).to.eql( 1 );
+      setTimeout( () => {
+        node.kill();
+        done();
+      }, 4000);
+    });
   });
 });
