@@ -7,11 +7,11 @@ And overwrite some of those with ENV variables
 ## Install & import
 
 ```bash
-npm install config_provider
+npm install config-provider
 ```
 
 ```js
-const ConfigProvider = require( 'config_provider' );
+const ConfigProvider = require( 'config-provider' );
 ```
 
 ## Load config files
