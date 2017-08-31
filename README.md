@@ -6,7 +6,9 @@ And overwrite some of those with ENV variables
 
 ## Install & import
 
-`npm install config_provider`
+```bash
+npm install config_provider
+```
 
 ```js
 const ConfigProvider = require( 'config_provider' );
@@ -15,12 +17,12 @@ const ConfigProvider = require( 'config_provider' );
 ## Load config files
 
 ### Eager loading
-All *.json* and *.js* files inside a folder in root of the app called */config* will
-be read as soons as this modules is required, so no actions required.
+All **.json** and **.js** files inside a folder called **/config** in app root will
+be read as soon as this module is required by the project, so no actions required.
 
 
 ### Lazy loading
-You can setup another folder containing your configuration files with the *.load()*:
+But, you can setup a alternative folder containing your configuration files with the `.load()` method:
 
 ```js
 ConfigProvider.load( './path/to/my/configs' );
@@ -29,6 +31,8 @@ ConfigProvider.load( './path/to/my/configs' );
 The parameter path is a string, and should be relative to the current folder.
 
 ## Accessing configurations
+
+Just use the `(.get()` method, with the path to the value, like this:
 
 ```js
 const value = ConfigProvider.get( 'general.system.input.type' );
@@ -45,11 +49,13 @@ In this example, there was a file called *general.json* with this content:
 }
 ```
 
+So the path will be like acessing properties of a JS object, where the first is the file name.
+
 *Note that the file extension is omitted when accessing the value*
 
 ## Applying ENV variables to the configs
 
-All environment variables, which names are compliant with the IEEE Std 1003.1-2001 norm
+All environment variables which names are compliant with the IEEE Std 1003.1-2001 norm
 (upper case letters, _ and numbers) are automatically applied to the configs, and can be
 accessed the same way as any other config.
 
@@ -62,8 +68,8 @@ ConfigProvider.get( 'foo' ) === 'bar'; // true
 
 ### Overwriting via ENV variables
 
-You can overwrite any configuration, even nested ones, via the environment variables, just use __
-(double underscores) to indicate a new level:
+You can overwrite any configuration, even nested ones, via the environment variables, just use **__**
+(double underscores) to indicate a nexted value:
 
 
 Given a *configs.json*:
@@ -87,7 +93,7 @@ ConfigProvider.get( 'configs.colors.red' ) === 'red'; // true
 
 If in the same config file you have configurations for more than one environment, like staging,
 production and development, the **ConfigProvider** will read just the appropriate one according
-to the current *process.env.NODE_ENV*:
+to the current `process.env.NODE_ENV`:
 
 Given a *config.json*:
 ```js
@@ -109,7 +115,7 @@ const ConfigProvider = require( 'configs.json' );
 ConfigProvider.get( 'token' ) === 'fake_token'; // true
 ```
 
-*Note that you do not need to write the env name in the path to access the value using the .get()*
+*Note that you do not need to write the NODE_ENV name in the path to access the value using the `.get()`*
 
 ## Supported files
 
@@ -126,7 +132,14 @@ module.exports = {
 
 ## Environment variables values parsing
 
-Any ENV variable which the value is a number or a boolean, will be converted when read by the *.get()*
+Any ENV variable which the value is a number or a boolean, will be converted when read:
+
+```js
+process.env.SOME_VALUE = '3';
+const ConfigProvider = require( 'configs.json' );
+
+ConfigProvider.get( 'some_value' ) === 3; // true
+```
 
 ## Notes
 
