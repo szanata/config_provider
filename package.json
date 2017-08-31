@@ -1,8 +1,8 @@
 {
   "name": "config-provider",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Configurations Providers for Node.js",
-  "main": "config_provider.js",
+  "main": "lib/index.js",
   "dependencies": {
     "walk.js": "1.0.1",
     "deepmerge": "^1.5.1"
