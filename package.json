@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:madeinstefano/config_provider.git"
+    "url": "https://github.com/szanata/config_provider"
   },
   "keywords": [
     "configuration",
@@ -34,11 +34,5 @@
   "scripts": {
     "lint": "eslint index.js --fix",
     "test": "nyc ./node_modules/.bin/mocha --reporter spec --recursive ./spec/unit --timeout 12000"
-  },
-  "contributors": [
-    {
-      "name": "Stéfano Zanata",
-      "email": "contato@szanata.com"
-    }
-  ]
+  }
 }
